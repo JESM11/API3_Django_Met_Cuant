@@ -1,14 +1,34 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 
+app = Flask(__name__)
+CORS(app, resources={r"/fibonacci": {"origins": "http://127.0.0.1:5500"}})
 
-app=Flask(__name__)
-@app.route("/fibonacci/<n>")
-def fibonacci(n) -> list:
-    num=int(n)
-    fib_sequence = [0, 1]
-    for i in range(2, num):
-        fib_sequence.append(fib_sequence[i-1] + fib_sequence[i-2])
-    return jsonify(fib_sequence[:num]),200
+@app.route("/fibonacci", methods=['GET', 'OPTIONS'])
+@app.route("/fibonacci/<int:n>", methods=['GET', 'OPTIONS'])
+def fibonacci(n=None) -> list:
+    if request.method == 'OPTIONS':
+        # Respondemos a la solicitud OPTIONS con los encabezados CORS adecuados
+        response = jsonify()
+        response.headers.add("Access-Control-Allow-Origin", "http://127.0.0.1:5500")
+        response.headers.add("Access-Control-Allow-Methods", "GET")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        return response
+
+    try:
+        if n is None:
+            n = request.args.get('n')
+
+        if n is None:
+            return jsonify({"error": "Parameter 'n' is required."}), 400
+
+        num = int(n)
+        fib_sequence = [0, 1]
+        for i in range(2, num):
+            fib_sequence.append(fib_sequence[i-1] + fib_sequence[i-2])
+        return jsonify(fib_sequence[:num]), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/LCS/<string1>/<string2>")
 def length_of_longest_common_substring(string1, string2) -> int:
