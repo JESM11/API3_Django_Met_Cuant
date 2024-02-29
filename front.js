@@ -31,12 +31,54 @@ async function fetchFibonacci() {
     }
 }
 
+async function fetchLcs() {
+    const string1Input = document.getElementById('string1');
+    const string2Input = document.getElementById('string2');
+    const resultPre = document.getElementById('lcs-result');
+
+    const string1 = string1Input.value;
+    const string2 = string2Input.value;
+
+    if (string1.trim() === '' || string2.trim() === '') {
+        alert('Por favor ingrese ambos strings.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/lcsmain/${string1}/${string2}`
+        );
+
+        if (response.ok) {
+            const data = await response.json();
+            resultPre.textContent = JSON.stringify(data, null, 2);
+        } else {
+            console.log('pene');
+            const errorMessage = await response.text();
+            resultPre.textContent = `Error: ${response.status} - ${response.statusText}\n${errorMessage}`;
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        // Handle the error
+        // ...
+    }
+
+}
+
 // Llamar a la función fetchFibonacci cuando se cargue la página
 document.addEventListener('DOMContentLoaded', function() {
-    const button = document.getElementById('fetchButton');
-    if (button) {
-        button.addEventListener('click', fetchFibonacci);
+    const fibButton = document.getElementById('fibButton');
+    if (fibButton) {
+        fibButton.addEventListener('click', fetchFibonacci);
     } else {
         console.error("Button with id 'fetchButton' not found.");
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const lcsButton = document.getElementById('lcsButton');
+    if (lcsButton) {
+        lcsButton.addEventListener('click', fetchLcs);
+    } else {
+        console.error("Button with id 'lcsButton' not found.");
     }
 });
