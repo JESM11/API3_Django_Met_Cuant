@@ -18,8 +18,10 @@ async function fetchFibonacci() {
 
         if (response.ok) {
             const data = await response.json();
+            let fdata = JSON.stringify(data, null, 2);
+            fdata = fdata.replace(/"/g, '');
             // Mostrar el resultado en el espacio debajo del input
-            resultPre.textContent = JSON.stringify(data, null, 2);
+            resultPre.textContent = fdata;
         } else {
             const errorMessage = await response.text();
             resultPre.textContent = `Error: ${response.status} - ${response.statusText}\n${errorMessage}`;
@@ -50,9 +52,10 @@ async function fetchLcs() {
 
         if (response.ok) {
             const data = await response.json();
-            resultPre.textContent = JSON.stringify(data, null, 2);
+            fdata = JSON.stringify(data, null, 2);
+            fdata = fdata.replace(/"/g, '');
+            resultPre.textContent = `${fdata} - Longitud: ${fdata.length}`;
         } else {
-            console.log('pene');
             const errorMessage = await response.text();
             resultPre.textContent = `Error: ${response.status} - ${response.statusText}\n${errorMessage}`;
         }
